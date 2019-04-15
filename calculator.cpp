@@ -11,7 +11,7 @@
 // Scanner implementation
 
 // You may have to modify this constructor, although it might not be neccessary.
-Scanner::Scanner() : line(0), 
+Scanner::Scanner() : line(1), 
                      value(0),
                      tok_pos(0) {
     int c = 0;  
@@ -24,6 +24,7 @@ Scanner::Scanner() : line(0),
 
 // You need to fill this method with the appropriate code for it to work as described in the project description.
 Token Scanner::nextToken() {
+
     return Scanner::machine(Init, tok_pos);
 }
 
@@ -58,6 +59,7 @@ Token Scanner::machine(State state, int pos) {
                 }
                 return Token::T_NUMBER;
             }
+            else scanError(this->line, current_char);
             break;
         
         case State::Mod:
@@ -67,15 +69,12 @@ Token Scanner::machine(State state, int pos) {
                 this->last_pos = pos;
                 if(current_char == 'd') return Token::T_MODULO;
             }
+            else scanError(this->line, current_char);
             break;
 
         default:
-            std::string s; 
-            s.push_back(current_char);
-            int state_num = static_cast<int>(state);
-            std::string msg_str = "Unhandled char '" + s + "' in state: " + std::to_string(state_num);
-            const char *msg = msg_str.c_str();
-            throw std::runtime_error(msg);
+            
+            break;
     }
     return T_EOF;
 }
