@@ -47,11 +47,15 @@ Token Scanner::machine(State state, int pos) {
             else if(current_char == 'm') return machine(State::Mod, pos + 1);
             else if(current_char == '\n') return Token::T_NEWLN;
             else if(std::isdigit(static_cast<unsigned char>(current_char))) {
-                std::string s;
-                s.push_back(current_char);
-                int num = std::stoi(s);
-                this->value = num;
-                return Token::T_NUMBER;
+                std:: string s;
+                while(std::isdigit(static_cast<unsigned char>(current_char))) {
+                    s.push_back(current_char);
+                    int num = std::stoi(s);
+                    this->value = num;
+                    pos = pos + 1;
+                    char current_char = input.at(pos);
+                    this->last_pos = pos;
+                }
             }
             break;
         
