@@ -53,7 +53,7 @@ Token Scanner::machine(State state, int pos) {
                     int num = std::stoi(s);
                     this->value = num;
                     pos = pos + 1;
-                    char current_char = input.at(pos);
+                    current_char = input.at(pos);
                     this->last_pos = pos;
                 }
             }
