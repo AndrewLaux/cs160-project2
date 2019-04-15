@@ -49,12 +49,12 @@ Token Scanner::machine(State state, int pos) {
             else if(std::isdigit(static_cast<unsigned char>(current_char))) {
                 std:: string s;
                 while(std::isdigit(static_cast<unsigned char>(current_char))) {
+                    this->last_pos = pos;
                     s.push_back(current_char);
                     int num = std::stoi(s);
                     this->value = num;
                     pos = pos + 1;
                     current_char = input.at(pos);
-                    this->last_pos = pos;
                 }
                 return Token::T_NUMBER;
             }
