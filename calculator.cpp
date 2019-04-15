@@ -56,6 +56,7 @@ Token Scanner::machine(State state, int pos) {
                     current_char = input.at(pos);
                     this->last_pos = pos;
                 }
+                return Token::T_NUMBER;
             }
             break;
         
