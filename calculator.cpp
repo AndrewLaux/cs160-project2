@@ -44,7 +44,7 @@ Token Scanner::machine(State state, int pos) {
             else if(current_char == '/') return Token::T_DIVIDE;
             else if(current_char == '-') return Token::T_MINUS;
             else if(current_char == char(EOF)) return Token::T_EOF;
-            else if(current_char == 'm') machine(State::Mod, pos + 1);
+            else if(current_char == 'm') return machine(State::Mod, pos + 1);
             else if(current_char == '\n') return Token::T_NEWLN;
             else if(std::isdigit(static_cast<unsigned char>(current_char))) {
                 std::string s;
