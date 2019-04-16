@@ -122,27 +122,22 @@ void Parser::ExpL_(){
     switch (lookahead)
     {
         case Token::T_SEMICOLON:
+            match(Token::T_SEMICOLON);
+            ExpL_();
+            break;
+
+        case Token::T_EOF:
             break;
     
-        default: //Epsilon
+        default: 
+            ExpL();
             break;
     }
 }
 
 void Parser::Exp(){
-    switch (lookahead)
-    {
-        case Token::T_OPENPAREN:
-            match(Token::T_OPENPAREN);
-            Exp();
-            match(Token::T_CLOSEPAREN);
-            break;
-    
-        default:
-            Term();
-            Exp_();
-            break;
-    }
+    Term();
+    Exp_();
 }
 
 void Parser::Exp_(){
@@ -197,8 +192,17 @@ void Parser::Term_(){
 }
 
 void Parser::Num() {
-    if(lookahead != Token::T_NUMBER) parseError(scanner.lineNumber(), lookahead);
-    match(Token::T_NUMBER);
+
+    if(lookahead == Token::T_NUMBER){
+        match(Token::T_NUMBER);
+    } 
+    else if(lookahead == Token::T_OPENPAREN) {
+        match(Token::T_OPENPAREN);
+        Exp();
+        match(Token::T_CLOSEPAREN);
+    }
+    else parseError(scanner.lineNumber(), lookahead);
+    
 }
 
 
