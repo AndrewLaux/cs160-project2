@@ -195,6 +195,7 @@ void Parser::Term_(){
 }
 
 void Parser::Num() {
+    if(lookahead != Token::T_NUMBER) parseError(scanner.lineNumber(), lookahead);
     match(Token::T_NUMBER);
 }
 
