@@ -114,45 +114,57 @@ void Parser::start() {
 }
 
 void Parser::ExpL(){
-    Exp();
-    ExpL_();
+    int result;
+    Exp(result);
+    ExpL_(result, false);
 }
 
-void Parser::ExpL_(){
+void Parser::ExpL_(int &res, bool recall){
     switch (lookahead)
     {
         case Token::T_SEMICOLON:
             match(Token::T_SEMICOLON);
-            ExpL_();
+            if(evaluate) {
+                std::cout << res;
+            }
+            recall = true;
+            ExpL_(res, recall);
             break;
 
         case Token::T_EOF:
+            if (evaluate && !recall) {
+                std::cout << res;
+            }
             break;
     
-        default: 
+        default:
+            std::cout << "\\n";
             ExpL();
             break;
     }
 }
 
-void Parser::Exp(){
-    Term();
-    Exp_();
+void Parser::Exp(int &res){
+    Term(res);
+    Exp_(res);
 }
 
-void Parser::Exp_(){
+void Parser::Exp_(int &res){
+    int rhs;
     switch (lookahead)
     {
         case Token::T_PLUS:
             match(Token::T_PLUS);
-            Term();
-            Exp_();
+            Term(rhs);
+            res = res + rhs;
+            Exp_(res);
             break;
 
         case Token::T_MINUS:
             match(Token::T_MINUS);
-            Term();
-            Exp_();
+            Term(rhs);
+            res = res - rhs;
+            Exp_(res);
             break;
     
         default: //Epsilon
@@ -160,30 +172,35 @@ void Parser::Exp_(){
     }
 }
 
-void Parser::Term(){
-    Num();
-    Term_();
+void Parser::Term(int &res){
+    Num(res);
+    Term_(res);
 }
 
-void Parser::Term_(){
+void Parser::Term_(int &res){
+    int rhs;
     switch (lookahead)
     {
         case Token::T_MULTIPLY:
             match(Token::T_MULTIPLY);
-            Num();
-            Term_();
+            Num(rhs);
+            res = res * rhs; 
+            Term_(res);
             break;
     
         case Token::T_DIVIDE:
             match(Token::T_DIVIDE);
-            Num();
-            Term_();
+            Num(rhs);
+            if(rhs == 0) divideByZeroError(scanner.lineNumber(), res);
+            res = res / rhs;
+            Term_(res);
             break;
 
         case Token::T_MODULO:
             match(Token::T_MODULO);
-            Num();
-            Term_();
+            Num(rhs);
+            res = res % rhs;
+            Term_(res);
             break;
 
         default:    //Epsilon
@@ -191,14 +208,15 @@ void Parser::Term_(){
     }
 }
 
-void Parser::Num() {
+void Parser::Num(int &res) {
 
     if(lookahead == Token::T_NUMBER){
+        res = scanner.getNumberValue();
         match(Token::T_NUMBER);
     } 
     else if(lookahead == Token::T_OPENPAREN) {
         match(Token::T_OPENPAREN);
-        Exp();
+        Exp(res);
         match(Token::T_CLOSEPAREN);
     }
     else parseError(scanner.lineNumber(), lookahead);

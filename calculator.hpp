@@ -43,12 +43,12 @@ class Parser {
 
     void start();
     void ExpL();
-    void ExpL_();
-    void Exp();
-    void Exp_();
-    void Term();
-    void Term_();
-    void Num();
+    void ExpL_(int &res, bool recall);
+    void Exp(int &res);
+    void Exp_(int &res);
+    void Term(int &res);
+    void Term_(int &res);
+    void Num(int &res);
 
     void match(Token token);
 
