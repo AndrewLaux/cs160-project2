@@ -102,7 +102,6 @@ int Scanner::getNumberValue() {
 // You may need to modify this constructor and make it do stuff, although it might not be neccessary.
 Parser::Parser(bool eval) : evaluate(eval) {
     this->lookahead = this->scanner.nextToken();
-    if(eval == false) parse();
 }
 
 void Parser::parse() {
@@ -176,16 +175,19 @@ void Parser::Term_(){
     {
         case Token::T_MULTIPLY:
             match(Token::T_MULTIPLY);
+            Num();
             Term_();
             break;
     
         case Token::T_DIVIDE:
             match(Token::T_DIVIDE);
+            Num();
             Term_();
             break;
 
         case Token::T_MODULO:
             match(Token::T_MODULO);
+            Num();
             Term_();
             break;
 
