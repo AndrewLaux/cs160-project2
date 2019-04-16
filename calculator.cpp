@@ -14,7 +14,7 @@
 Scanner::Scanner() : line(1), 
                      value(0),
                      tok_pos(0) {
-    int c = 0;  
+    long c = 0;  
                     
     do {
         c = getchar();
@@ -29,7 +29,7 @@ Token Scanner::nextToken() {
 }
 
 // Recursive state machine for computing next token.
-Token Scanner::machine(State state, int pos) {
+Token Scanner::machine(State state, long pos) {
     char current_char = input.at(pos);
     this->last_pos = pos;
 
@@ -52,7 +52,7 @@ Token Scanner::machine(State state, int pos) {
                 while(std::isdigit(static_cast<unsigned char>(current_char))) {
                     this->last_pos = pos;
                     s.push_back(current_char);
-                    int num = std::stoi(s);
+                    long num = std::stol(s);
                     this->value = num;
                     pos = pos + 1;
                     current_char = input.at(pos);
@@ -89,11 +89,11 @@ void Scanner::eatToken(Token toConsume) {
     return;
 }
 
-int Scanner::lineNumber() {
+long Scanner::lineNumber() {
     return this->line;
 }
 
-int Scanner::getNumberValue() {
+long Scanner::getNumberValue() {
     return this->value;
 }
 
@@ -116,12 +116,12 @@ void Parser::start() {
 }
 
 void Parser::ExpL(){
-    int result;
+    long result = 0;
     Exp(result);
     ExpL_(result, false);
 }
 
-void Parser::ExpL_(int &res, bool recall){
+void Parser::ExpL_(long &res, bool recall){
     switch (lookahead)
     {
         case Token::T_SEMICOLON:
@@ -148,18 +148,21 @@ void Parser::ExpL_(int &res, bool recall){
     }
 }
 
-void Parser::Exp(int &res){
+void Parser::Exp(long &res){
     Term(res);
     Exp_(res);
 }
 
-void Parser::Exp_(int &res){
-    int rhs;
+void Parser::Exp_(long &res){
+    long rhs;
     switch (lookahead)
     {
         case Token::T_PLUS:
             match(Token::T_PLUS);
             Term(rhs);
+            long long x;
+            x = static_cast<long long>(res) + rhs;
+            if(x > 0x7FFFFFF) outOfBoundsError(scanner.lineNumber(), x);
             res = res + rhs;
             Exp_(res);
             break;
@@ -176,18 +179,21 @@ void Parser::Exp_(int &res){
     }
 }
 
-void Parser::Term(int &res){
+void Parser::Term(long &res){
     Num(res);
     Term_(res);
 }
 
-void Parser::Term_(int &res){
-    int rhs;
+void Parser::Term_(long &res){
+    long rhs;
     switch (lookahead)
     {
         case Token::T_MULTIPLY:
             match(Token::T_MULTIPLY);
             Num(rhs);
+            long x;
+            x = static_cast<long>(res) * rhs;
+            if(x > 0x7FFFFFF) outOfBoundsError(scanner.lineNumber(), x);
             res = res * rhs; 
             Term_(res);
             break;
@@ -212,7 +218,7 @@ void Parser::Term_(int &res){
     }
 }
 
-void Parser::Num(int &res) {
+void Parser::Num(long &res) {
 
     if(lookahead == Token::T_NUMBER){
         res = scanner.getNumberValue();

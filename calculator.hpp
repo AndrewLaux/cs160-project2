@@ -15,19 +15,19 @@ enum State {
 
 // You can freely add member fields and functions to this class.
 class Scanner {
-    int line;
-    int value;
-    int tok_pos;
-    int last_pos;
+    long line;
+    long value;
+    long tok_pos;
+    long last_pos;
     std::vector<char>input;
 
 public:
     // You really need to implement these four methods for the scanner to work.
     Token nextToken();
-    Token machine(State state, int pos);
+    Token machine(State state, long pos);
     void eatToken(Token toConsume);
-    int lineNumber();
-    int getNumberValue();
+    long lineNumber();
+    long getNumberValue();
     
     Scanner();
 };
@@ -44,12 +44,12 @@ class Parser {
 
     void start();
     void ExpL();
-    void ExpL_(int &res, bool recall);
-    void Exp(int &res);
-    void Exp_(int &res);
-    void Term(int &res);
-    void Term_(int &res);
-    void Num(int &res);
+    void ExpL_(long &res, bool recall);
+    void Exp(long &res);
+    void Exp_(long &res);
+    void Term(long &res);
+    void Term_(long &res);
+    void Num(long &res);
 
     void match(Token token);
 
