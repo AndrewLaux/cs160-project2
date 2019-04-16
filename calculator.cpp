@@ -205,7 +205,11 @@ void Parser::Num() {
 void Parser::match(Token token){
     if (lookahead == token) {
         scanner.eatToken(token);
-        lookahead = scanner.nextToken();
+        if(token != Token::T_EOF) lookahead = scanner.nextToken();
+        while (lookahead == Token::T_NEWLN) {
+            scanner.eatToken(T_NEWLN);
+            lookahead = scanner.nextToken();
+        }
     }
     else mismatchError(scanner.lineNumber(), token, lookahead);
 }
