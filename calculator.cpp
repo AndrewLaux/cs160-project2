@@ -108,7 +108,7 @@ Parser::Parser(bool eval) : evaluate(eval) {
 void Parser::parse() {
     start();
     match(Token::T_EOF);
-    std::cout << output;
+    if(evaluate)std::cout << output;
 }
 
 void Parser::start() {
