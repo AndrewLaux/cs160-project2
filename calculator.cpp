@@ -81,7 +81,11 @@ Token Scanner::machine(State state, int pos) {
 
 // You need to fill this method with the appropriate code for it to work as described in the project description.
 void Scanner::eatToken(Token toConsume) {
-    this->tok_pos = this->last_pos + 1;
+    if(toConsume == nextToken()) {
+        this->tok_pos = this->last_pos + 1;
+        if(toConsume == Token::T_NEWLN) this->line++;
+    }
+    
     return;
 }
 
@@ -97,21 +101,109 @@ int Scanner::getNumberValue() {
 
 // You may need to modify this constructor and make it do stuff, although it might not be neccessary.
 Parser::Parser(bool eval) : evaluate(eval) {
-    // WRITEME
+    this->lookahead = this->scanner.nextToken();
+    if(eval == false) parse();
 }
 
 void Parser::parse() {
     start();
+    match(Token::T_EOF);
 }
 
 void Parser::start() {
-    // I am a placeholder. Implement a recursive descent parser starting from me. Add other methods for different recursive steps.
-    // Depending on how you designed your grammar, how many levels of operator precedence you need, etc., you might end up with more
-    // or less steps in the process.
-    //
-    // WRITEME
+    ExpL();
 }
 
-// You will need to add more methods for this to work. Don't forget to also define them in calculator.hpp!
-// WRITEME
+void Parser::ExpL(){
+    Exp();
+    ExpL_();
+}
+
+void Parser::ExpL_(){
+    switch (lookahead)
+    {
+        case Token::T_SEMICOLON:
+            break;
+    
+        default: //Epsilon
+            break;
+    }
+}
+
+void Parser::Exp(){
+    switch (lookahead)
+    {
+        case Token::T_OPENPAREN:
+            match(Token::T_OPENPAREN);
+            Exp();
+            match(Token::T_CLOSEPAREN);
+            break;
+    
+        default:
+            Term();
+            Exp_();
+            break;
+    }
+}
+
+void Parser::Exp_(){
+    switch (lookahead)
+    {
+        case Token::T_PLUS:
+            match(Token::T_PLUS);
+            Term();
+            Exp_();
+            break;
+
+        case Token::T_MINUS:
+            match(Token::T_MINUS);
+            Term();
+            Exp_();
+            break;
+    
+        default: //Epsilon
+            break;
+    }
+}
+
+void Parser::Term(){
+    Num();
+    Term_();
+}
+
+void Parser::Term_(){
+    switch (lookahead)
+    {
+        case Token::T_MULTIPLY:
+            match(Token::T_MULTIPLY);
+            Term_();
+            break;
+    
+        case Token::T_DIVIDE:
+            match(Token::T_DIVIDE);
+            Term_();
+            break;
+
+        case Token::T_MODULO:
+            match(Token::T_MODULO);
+            Term_();
+            break;
+
+        default:    //Epsilon
+            break;
+    }
+}
+
+void Parser::Num() {
+    match(Token::T_NUMBER);
+}
+
+
+void Parser::match(Token token){
+    if (lookahead == token) {
+        scanner.eatToken(token);
+        lookahead = scanner.nextToken();
+    }
+    else mismatchError(scanner.lineNumber(), token, lookahead);
+}
 
