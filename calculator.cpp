@@ -127,6 +127,7 @@ void Parser::ExpL_(int &res, bool recall){
         case Token::T_SEMICOLON:
             match(Token::T_SEMICOLON);
             if(evaluate) {
+                if(res > 0x7FFFFFFF) outOfBoundsError(scanner.lineNumber, res);
                 output.append(std::to_string(res));
             }
             recall = true;
@@ -135,6 +136,7 @@ void Parser::ExpL_(int &res, bool recall){
 
         case Token::T_EOF:
             if (evaluate && !recall) {
+                if(res > 0x7FFFFFFF) outOfBoundsError(scanner.lineNumber, res);
                 output.append(std::to_string(res));
             }
             break;
