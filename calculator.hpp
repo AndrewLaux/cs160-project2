@@ -40,6 +40,7 @@ class Parser {
     
     bool evaluate;
     Token lookahead;
+    std::string output;
 
     void start();
     void ExpL();

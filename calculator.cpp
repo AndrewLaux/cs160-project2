@@ -102,11 +102,13 @@ int Scanner::getNumberValue() {
 // You may need to modify this constructor and make it do stuff, although it might not be neccessary.
 Parser::Parser(bool eval) : evaluate(eval) {
     this->lookahead = this->scanner.nextToken();
+    output = "";
 }
 
 void Parser::parse() {
     start();
     match(Token::T_EOF);
+    std::cout << output;
 }
 
 void Parser::start() {
@@ -125,7 +127,7 @@ void Parser::ExpL_(int &res, bool recall){
         case Token::T_SEMICOLON:
             match(Token::T_SEMICOLON);
             if(evaluate) {
-                std::cout << res;
+                output += res;
             }
             recall = true;
             ExpL_(res, recall);
@@ -133,12 +135,12 @@ void Parser::ExpL_(int &res, bool recall){
 
         case Token::T_EOF:
             if (evaluate && !recall) {
-                std::cout << res;
+                output += res;
             }
             break;
     
         default:
-            std::cout << "\\n";
+            output += "\\n";
             ExpL();
             break;
     }
