@@ -127,7 +127,7 @@ void Parser::ExpL_(int &res, bool recall){
         case Token::T_SEMICOLON:
             match(Token::T_SEMICOLON);
             if(evaluate) {
-                output += res;
+                output.append(std::to_string(res));
             }
             recall = true;
             ExpL_(res, recall);
@@ -135,7 +135,7 @@ void Parser::ExpL_(int &res, bool recall){
 
         case Token::T_EOF:
             if (evaluate && !recall) {
-                output += res;
+                output.append(std::to_string(res));
             }
             break;
     
